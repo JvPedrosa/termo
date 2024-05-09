@@ -1,5 +1,7 @@
+import { Game } from "./pages/Game";
+
 function App() {
-  return <h1>hi</h1>;
+  return <Game />;
 }
 
 export default App;
