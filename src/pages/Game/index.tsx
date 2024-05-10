@@ -15,16 +15,16 @@ function getWord() {
 }
 
 export const Game = () => {
-  const [wordToGuess] = useState<string>(() => getWord());
+  const [wordToGuess] = useState<string>(getWord());
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
 
   useEffect(() => {
     setCurrentGuess("");
-  }, [wordToGuess]);
+  }, []);
 
   const submitGuess = () => {
-    if (currentGuess.length === 5) {
+    if (currentGuess.length === 5 && !guessedWords.includes(currentGuess)) {
       setGuessedWords((prev) => [...prev, currentGuess]);
       setCurrentGuess("");
     }
@@ -40,13 +40,21 @@ export const Game = () => {
     }
   };
 
+  const checkLetterPosition = (char: string, idx: number) => {
+    if (char === wordToGuess[idx]) {
+      return "#0197f6";
+    } else if (wordToGuess.includes(char)) {
+      return "#e36322";
+    }
+  };
+
   return (
     <Container>
       <MessageFinal>
         {guessedWords.includes(wordToGuess)
-          ? "You win!"
+          ? "Você acertou! A palavra era " + wordToGuess
           : guessedWords.length >= 6
-          ? "You lose!"
+          ? "Você perdeu! A palavra era " + wordToGuess
           : ""}
       </MessageFinal>
 
@@ -56,7 +64,7 @@ export const Game = () => {
             {word.split("").map((char, idx) => (
               <span
                 key={idx}
-                style={{ color: wordToGuess[idx] === char ? "green" : "red" }}
+                style={{ backgroundColor: checkLetterPosition(char, idx) }}
               >
                 {char.toUpperCase()}
               </span>
@@ -65,14 +73,16 @@ export const Game = () => {
         ))}
       </PastGuesses>
 
-      <CurrentGuessDisplay>
-        {currentGuess
-          .padEnd(5, "_")
-          .split("")
-          .map((letter, index) => (
-            <span key={index}>{letter.toUpperCase()}</span>
-          ))}
-      </CurrentGuessDisplay>
+      {!guessedWords.includes(wordToGuess) && guessedWords.length < 6 && (
+        <CurrentGuessDisplay>
+          {currentGuess
+            .padEnd(5, "_")
+            .split("")
+            .map((letter, index) => (
+              <span key={index}>{letter.toUpperCase()}</span>
+            ))}
+        </CurrentGuessDisplay>
+      )}
 
       <KeyboardContainer>
         <Keyboard>
@@ -114,7 +124,7 @@ export const Game = () => {
           style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}
         >
           <button onClick={() => handleKeyPress("Enter")}>Submit</button>
-          <button onClick={() => handleKeyPress("Backspace")}>{"⌫"}</button>
+          <button onClick={() => handleKeyPress("Backspace")}>⌫</button>
         </div>
       </KeyboardContainer>
     </Container>

@@ -14,6 +14,7 @@ export const Container = styled.div`
 export const MessageFinal = styled.div`
   font-size: 2rem;
   text-align: center;
+  tranform: uppercase;
 `;
 
 export const PastGuesses = styled.div`
@@ -24,12 +25,23 @@ export const PastGuesses = styled.div`
   font-size: 3rem;
   font-weight: bold;
   text-transform: uppercase;
-  width: 30%;
+  gap: 0.25rem;
 
   > div {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    gap: 0.25rem;
+
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background-color: #615458;
+      border-radius: 8px;
+    }
   }
 `;
 
@@ -75,6 +87,9 @@ export const CurrentGuessDisplay = styled.div`
   font-size: 3rem;
   font-weight: bold;
   text-transform: uppercase;
-  width: 30%;
   justify-content: space-between;
+
+  span {
+    width: 48px;
+  }
 `;
