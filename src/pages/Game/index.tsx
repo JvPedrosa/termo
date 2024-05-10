@@ -23,6 +23,25 @@ export const Game = () => {
     setCurrentGuess("");
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+      if (key === "backspace") {
+        setCurrentGuess(currentGuess.slice(0, -1));
+      } else if (key === "enter") {
+        submitGuess();
+      } else if (currentGuess.length < 5 && /^[a-z]$/.test(key)) {
+        setCurrentGuess(currentGuess + key);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentGuess]);
+
   const submitGuess = () => {
     if (currentGuess.length === 5 && !guessedWords.includes(currentGuess)) {
       setGuessedWords((prev) => [...prev, currentGuess]);
@@ -37,14 +56,6 @@ export const Game = () => {
       submitGuess();
     } else if (currentGuess.length < 5) {
       setCurrentGuess(currentGuess + key);
-    }
-  };
-
-  const checkLetterPosition = (char: string, idx: number) => {
-    if (char === wordToGuess[idx]) {
-      return "#0197f6";
-    } else if (wordToGuess.includes(char)) {
-      return "#e36322";
     }
   };
 
@@ -64,7 +75,14 @@ export const Game = () => {
             {word.split("").map((char, idx) => (
               <span
                 key={idx}
-                style={{ backgroundColor: checkLetterPosition(char, idx) }}
+                style={{
+                  backgroundColor:
+                    char === wordToGuess[idx]
+                      ? "#0197f6"
+                      : wordToGuess.includes(char)
+                      ? "#e36322"
+                      : "transparent",
+                }}
               >
                 {char.toUpperCase()}
               </span>
