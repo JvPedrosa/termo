@@ -1,12 +1,13 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  max-width: 800px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin: 0 auto;
+  margin: 16px auto;
   align-items: center;
+  justify-content: space-around;
   height: 100%;
   position: relative;
 `;
@@ -51,8 +52,6 @@ export const KeyboardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  position: absolute;
-  bottom: 16px;
 `;
 
 export const Keyboard = styled.div`

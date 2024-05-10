@@ -22,7 +22,7 @@ function getWord() {
 }
 
 export const Game = () => {
-  const [wordToGuess] = useState<string>(getWord());
+  const [wordToGuess, setWordToGuess] = useState<string>(getWord());
   const normalizedWordToGuess = normalize(wordToGuess);
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
@@ -71,13 +71,35 @@ export const Game = () => {
     }
   };
 
+  const restartGame = () => {
+    setWordToGuess(getWord());
+    setCurrentGuess("");
+    setGuessedWords([]);
+  };
+
   return (
     <Container>
+      {guessedWords.includes(normalizedWordToGuess) ||
+        (guessedWords.length >= 6 && (
+          <button
+            onClick={restartGame}
+            style={{
+              position: "absolute",
+              top: "64px",
+              right: "8px",
+              zIndex: "1000",
+              color: "#0197f6",
+            }}
+          >
+            Jogar Novamente
+          </button>
+        ))}
+
       <MessageFinal>
         {guessedWords.includes(normalizedWordToGuess)
-          ? "Você acertou! A palavra era " + wordToGuess
+          ? "Você acertou! A palavra era " + wordToGuess.toLocaleUpperCase()
           : guessedWords.length >= 6
-          ? "Você perdeu! A palavra era " + wordToGuess
+          ? "Você perdeu! A palavra era " + wordToGuess.toLocaleUpperCase()
           : ""}
       </MessageFinal>
 
