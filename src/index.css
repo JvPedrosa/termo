@@ -27,11 +27,13 @@ a:hover {
 }
 
 body {
+  background: radial-gradient(circle at left, #352558, #474056);
+  color: white;
+  min-height: 100vh;
   margin: 0;
-  padding: 16px;
   display: flex;
-  min-width: 320px;
-  min-height: 90vh;
+  align-items: center;
+  justify-content: center;
 }
 
 h1 {
