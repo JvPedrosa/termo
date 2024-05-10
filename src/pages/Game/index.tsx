@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import words from "../../data/words.json";
 import keys from "../../data/keyboard.json";
 import {
   Container,
-  HangmanWord,
   Keyboard,
   KeyboardContainer,
   MessageFinal,
+  CurrentGuessDisplay,
+  PastGuesses,
 } from "./styles";
 
 function getWord() {
@@ -14,104 +15,107 @@ function getWord() {
 }
 
 export const Game = () => {
-  const [wordToGuess, setWordToGuess] = useState<string>(() => {
-    return words[Math.floor(Math.random() * words.length)];
-  });
-  const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
-  const incorrectLetters = guessedLetters.filter(
-    (letter) => !wordToGuess.includes(letter)
-  );
-
-  const isLoser = incorrectLetters.length >= 6;
-  const isWinner = wordToGuess
-    .split("")
-    .every((letter) => guessedLetters.includes(letter));
-
-  const addGuessedLetter = useCallback(
-    (letter: string) => {
-      if (guessedLetters.includes(letter) || isLoser || isWinner) return;
-
-      setGuessedLetters((currentLetters) => [...currentLetters, letter]);
-    },
-    [guessedLetters, isWinner, isLoser]
-  );
+  const [wordToGuess] = useState<string>(() => getWord());
+  const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [guessedWords, setGuessedWords] = useState<string[]>([]);
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const key = e.key;
-      if (!key.match(/^[a-z]$/)) return;
+    setCurrentGuess("");
+  }, [wordToGuess]);
 
-      e.preventDefault();
-      addGuessedLetter(key);
-    };
+  const submitGuess = () => {
+    if (currentGuess.length === 5) {
+      setGuessedWords((prev) => [...prev, currentGuess]);
+      setCurrentGuess("");
+    }
+  };
 
-    document.addEventListener("keypress", handler);
-
-    return () => {
-      document.removeEventListener("keypress", handler);
-    };
-  }, [guessedLetters]);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const key = e.key;
-      if (key !== "Enter") return;
-
-      e.preventDefault();
-      setGuessedLetters([]);
-      setWordToGuess(getWord());
-    };
-
-    document.addEventListener("keypress", handler);
-
-    return () => {
-      document.removeEventListener("keypress", handler);
-    };
-  }, []);
+  const handleKeyPress = (key: string) => {
+    if (key === "Backspace") {
+      setCurrentGuess(currentGuess.slice(0, -1));
+    } else if (key === "Enter") {
+      submitGuess();
+    } else if (currentGuess.length < 5) {
+      setCurrentGuess(currentGuess + key);
+    }
+  };
 
   return (
     <Container>
       <MessageFinal>
-        {isLoser && "You lose!"}
-        {isWinner && "You win!"}
+        {guessedWords.includes(wordToGuess)
+          ? "You win!"
+          : guessedWords.length >= 6
+          ? "You lose!"
+          : ""}
       </MessageFinal>
 
-      <HangmanWord>
-        {wordToGuess.split("").map((letter, index) => (
-          <span style={{ borderBottom: ".1em solid black" }} key={index}>
-            <span
-              style={{
-                visibility:
-                  guessedLetters.includes(letter) || isLoser
-                    ? "visible"
-                    : "hidden",
-                color:
-                  !guessedLetters.includes(letter) && isLoser ? "red" : "black",
-              }}
-            >
-              {letter}
-            </span>
-          </span>
+      <PastGuesses>
+        {guessedWords.map((word, index) => (
+          <div key={index}>
+            {word.split("").map((char, idx) => (
+              <span
+                key={idx}
+                style={{ color: wordToGuess[idx] === char ? "green" : "red" }}
+              >
+                {char.toUpperCase()}
+              </span>
+            ))}
+          </div>
         ))}
-      </HangmanWord>
+      </PastGuesses>
+
+      <CurrentGuessDisplay>
+        {currentGuess
+          .padEnd(5, "_")
+          .split("")
+          .map((letter, index) => (
+            <span key={index}>{letter.toUpperCase()}</span>
+          ))}
+      </CurrentGuessDisplay>
 
       <KeyboardContainer>
         <Keyboard>
-          {keys.map((key) => {
-            const isActive = guessedLetters.includes(key);
-            const isInactive = incorrectLetters.includes(key);
-            return (
-              <button
-                onClick={() => addGuessedLetter(key)}
-                className={isActive ? "active" : isInactive ? "inactive" : ""}
-                disabled={isInactive || isActive || isWinner || isLoser}
-                key={key}
-              >
-                {key}
-              </button>
-            );
-          })}
+          {keys.firstRow.map((key) => (
+            <button
+              key={key}
+              onClick={() => handleKeyPress(key)}
+              disabled={currentGuess.length === 5}
+            >
+              {key}
+            </button>
+          ))}
         </Keyboard>
+        <Keyboard>
+          {keys.secondRow.map((key) => (
+            <button
+              key={key}
+              onClick={() => handleKeyPress(key)}
+              disabled={currentGuess.length === 5}
+            >
+              {key}
+            </button>
+          ))}
+        </Keyboard>
+
+        <Keyboard>
+          {keys.thirdRow.map((key) => (
+            <button
+              key={key}
+              onClick={() => handleKeyPress(key)}
+              disabled={currentGuess.length === 5}
+            >
+              {key}
+            </button>
+          ))}
+        </Keyboard>
+
+        <div
+          style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}
+        >
+          <button onClick={() => handleKeyPress("Enter")}>Submit</button>
+          <button onClick={() => handleKeyPress("Backspace")}>{"⌫"}</button>
+        </div>
       </KeyboardContainer>
     </Container>
   );
