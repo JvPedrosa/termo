@@ -10,12 +10,20 @@ import {
   PastGuesses,
 } from "./styles";
 
+function normalize(word: string) {
+  return word
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function getWord() {
   return words[Math.floor(Math.random() * words.length)];
 }
 
 export const Game = () => {
   const [wordToGuess] = useState<string>(getWord());
+  const normalizedWordToGuess = normalize(wordToGuess);
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [guessedWords, setGuessedWords] = useState<string[]>([]);
 
@@ -43,8 +51,12 @@ export const Game = () => {
   }, [currentGuess]);
 
   const submitGuess = () => {
-    if (currentGuess.length === 5 && !guessedWords.includes(currentGuess)) {
-      setGuessedWords((prev) => [...prev, currentGuess]);
+    const normalizedGuess = normalize(currentGuess);
+    if (
+      normalizedGuess.length === 5 &&
+      !guessedWords.includes(normalizedGuess)
+    ) {
+      setGuessedWords((prev) => [...prev, normalizedGuess]);
       setCurrentGuess("");
     }
   };
@@ -62,7 +74,7 @@ export const Game = () => {
   return (
     <Container>
       <MessageFinal>
-        {guessedWords.includes(wordToGuess)
+        {guessedWords.includes(normalizedWordToGuess)
           ? "Você acertou! A palavra era " + wordToGuess
           : guessedWords.length >= 6
           ? "Você perdeu! A palavra era " + wordToGuess
@@ -70,37 +82,47 @@ export const Game = () => {
       </MessageFinal>
 
       <PastGuesses>
-        {guessedWords.map((word, index) => (
+        {guessedWords.map((guessedWord, index) => (
           <div key={index}>
-            {word.split("").map((char, idx) => (
-              <span
-                key={idx}
-                style={{
-                  backgroundColor:
-                    char === wordToGuess[idx]
-                      ? "#0197f6"
-                      : wordToGuess.includes(char)
-                      ? "#e36322"
-                      : "transparent",
-                }}
-              >
-                {char.toUpperCase()}
-              </span>
-            ))}
+            {guessedWord.split("").map((char, idx) => {
+              const normalizedChar = normalize(char);
+              // Verifica se a letra normalizada está na posição correta.
+              const isCorrect = normalizedChar === normalizedWordToGuess[idx];
+              // Se a letra estiver correta, usa a letra da palavra original com acento.
+              const displayChar = isCorrect
+                ? wordToGuess[idx]
+                : char.toUpperCase();
+
+              return (
+                <span
+                  key={idx}
+                  style={{
+                    backgroundColor: isCorrect
+                      ? "#0197f6" // Azul para letras corretas na posição certa.
+                      : normalizedWordToGuess.includes(normalizedChar)
+                      ? "#e36322" // Laranja para letras corretas na posição errada.
+                      : "transparent", // Transparente para letras erradas.
+                  }}
+                >
+                  {displayChar}
+                </span>
+              );
+            })}
           </div>
         ))}
       </PastGuesses>
 
-      {!guessedWords.includes(wordToGuess) && guessedWords.length < 6 && (
-        <CurrentGuessDisplay>
-          {currentGuess
-            .padEnd(5, "_")
-            .split("")
-            .map((letter, index) => (
-              <span key={index}>{letter.toUpperCase()}</span>
-            ))}
-        </CurrentGuessDisplay>
-      )}
+      {!guessedWords.includes(normalizedWordToGuess) &&
+        guessedWords.length < 6 && (
+          <CurrentGuessDisplay>
+            {currentGuess
+              .padEnd(5, "_")
+              .split("")
+              .map((letter, index) => (
+                <span key={index}>{letter.toUpperCase()}</span>
+              ))}
+          </CurrentGuessDisplay>
+        )}
 
       <KeyboardContainer>
         <Keyboard>
