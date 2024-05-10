@@ -79,21 +79,22 @@ export const Game = () => {
 
   return (
     <Container>
-      {guessedWords.includes(normalizedWordToGuess) ||
-        (guessedWords.length >= 6 && (
-          <button
-            onClick={restartGame}
-            style={{
-              position: "absolute",
-              top: "64px",
-              right: "8px",
-              zIndex: "1000",
-              color: "#0197f6",
-            }}
-          >
-            Jogar Novamente
-          </button>
-        ))}
+      {(guessedWords.includes(normalizedWordToGuess) ||
+        guessedWords.length >= 6) && (
+        <button
+          onClick={restartGame}
+          style={{
+            position: "absolute",
+            top: "80px",
+            right: "8px",
+            zIndex: "1000",
+            color: "#0197f6",
+            backgroundColor: "#fff",
+          }}
+        >
+          Jogar Novamente
+        </button>
+      )}
 
       <MessageFinal>
         {guessedWords.includes(normalizedWordToGuess)
@@ -123,7 +124,7 @@ export const Game = () => {
                       ? "#0197f6" // Azul para letras corretas na posição certa.
                       : normalizedWordToGuess.includes(normalizedChar)
                       ? "#e36322" // Laranja para letras corretas na posição errada.
-                      : "transparent", // Transparente para letras erradas.
+                      : "#615458", // Cinza para letras incorretas.ide
                   }}
                 >
                   {displayChar}
@@ -185,8 +186,8 @@ export const Game = () => {
         <div
           style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}
         >
-          <button onClick={() => handleKeyPress("Enter")}>Submit</button>
           <button onClick={() => handleKeyPress("Backspace")}>⌫</button>
+          <button onClick={() => handleKeyPress("Enter")}>Submit</button>
         </div>
       </KeyboardContainer>
     </Container>

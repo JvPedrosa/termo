@@ -5,7 +5,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin: 16px auto;
   align-items: center;
   justify-content: space-around;
   height: 100%;
@@ -40,7 +39,6 @@ export const PastGuesses = styled.div`
       justify-content: center;
       width: 64px;
       height: 64px;
-      background-color: #615458;
       border-radius: 8px;
     }
   }
@@ -51,24 +49,23 @@ export const KeyboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 `;
 
 export const Keyboard = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: 5px;
+  gap: 0.5rem;
 
   button {
     width: 64px;
-    border: 3px solid black;
+    height: 64px;
     font-size: 1.2rem;
     text-transform: uppercase;
     padding: 0.8rem;
     font-weight: bold;
     transition: all 0.2s;
-    border: 2px solid #444;
     background-color: #888;
     color: white;
     &:disabled {
@@ -90,5 +87,6 @@ export const CurrentGuessDisplay = styled.div`
 
   span {
     width: 48px;
+    text-align: center;
   }
 `;
