@@ -13,7 +13,7 @@ export const PastGuesses = styled.div`
   > div {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     gap: 0.25rem;
 
     span {
@@ -47,10 +47,18 @@ export const CurrentGuessDisplay = styled.div`
   font-size: 3rem;
   font-weight: bold;
   text-transform: uppercase;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 0.25rem;
 
   span {
-    width: 48px;
-    text-align: center;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 2px solid #d3d6da;
+    background-color: #ccc;
+    color: #000;
   }
 `;

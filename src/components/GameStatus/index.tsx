@@ -12,15 +12,15 @@ export const GameStatus = () => {
 
   return (
     <MessageFinal>
-      {(guessedWords.includes(normalizedWordToGuess) ||
-        guessedWords.length >= 6) && (
-        <button onClick={restartGame}>Jogar Novamente</button>
-      )}
       {guessedWords.includes(normalizedWordToGuess)
         ? "Você acertou! A palavra era " + wordToGuess.toLocaleUpperCase()
         : guessedWords.length >= 6
         ? "Você perdeu! A palavra era " + wordToGuess.toLocaleUpperCase()
         : ""}
+      {(guessedWords.includes(normalizedWordToGuess) ||
+        guessedWords.length >= 6) && (
+        <button onClick={restartGame}>Jogar Novamente</button>
+      )}
     </MessageFinal>
   );
 };
